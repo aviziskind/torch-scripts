@@ -1,0 +1,11 @@
+table.any = function(tbl)
+    
+    for i,v in ipairs(tbl) do
+        if v then
+            return true
+        end
+    end
+    return false
+    
+    
+end
