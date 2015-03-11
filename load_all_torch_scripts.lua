@@ -1,6 +1,6 @@
 local showLoading = false
 local nameOfThisFile = 'load_all_torch_scripts.lua'
-local myscripts_dir = paths.home .. '/Code/myscripts/torch/'
+local myscripts_dir = paths.home .. '/Code/scripts/torch/'
 
 
 runAllScriptsInFolder = function(baseFolder, level)
