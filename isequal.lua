@@ -1,4 +1,8 @@
-isequal = function(x,y, maxNCompare_tbl)
+isequal = function(x,y)    
+    return isequal_upTo(x,y)
+end
+
+isequal_upTo = function(x,y, maxNCompare_tbl)
     local haveMaxN = maxNCompare_tbl ~= nil
     
     if haveMaxN and (maxNCompare_tbl < 1) then
@@ -114,6 +118,8 @@ isequal = function(x,y, maxNCompare_tbl)
 end
 
 
+
+
 torch.tensorsEqual = function(x,y)
     X = x;
     Y = y;
@@ -178,6 +184,13 @@ torch.storagesEqual = function(x,y)
     return true
 
 end
+
+
+
+
+
+
+
         
         --[[
 table.fieldsInAnotInB = function(a,b)
