@@ -1,17 +1,35 @@
 local showLoading = false
 local nameOfThisFile = 'load_all_torch_scripts.lua'
-local myscripts_dir = paths.home .. '/Code/scripts/torch/'
+local myscripts_dir = '/f/scripts/torch/'
 
+local dirsToSkip = {['.git'] = 1}
+local filesLoadedCount = 0;
 
-runAllScriptsInFolder = function(baseFolder, level)
+runAllScriptsInFolder = function(baseFolder, showLoading, level)
+    if not level then
+        level = 0;
+    end
+    if not showLoading then
+        showLoading = false;
+    end
+    if level == 0 then
+        filesLoadedCount = 0;
+    end
+    if level == 0 and not showLoading then
+        io.write('Loading all scripts in "' .. baseFolder .. '" ...')
+    end
   
     local allNames = paths.dir(baseFolder)
+    if allNames == nil then
+        error('Nothing in ' .. baseFolder)
+    end
   
     for _, name in pairs(allNames) do
             
         local str_prefix = string.rep('  ', level)
         
-        local idx_ext = string.find(name, '.lua')
+        local idx_ext = string.find(name, '[.]lua$')  -- put [] around . so that looks for actual ".", not any letter.  $ = end of string
+        
         if (idx_ext ~= nil) and not (name == nameOfThisFile) then  -- if is a .lua script, load it
             --print(script_name)
             if showLoading then
@@ -19,11 +37,13 @@ runAllScriptsInFolder = function(baseFolder, level)
             end
             
             dofile (baseFolder .. name)
-        elseif (name ~= '.') and (name ~= '..') and paths.dirp(baseFolder .. name) then  -- if directory, recurse...
+            filesLoadedCount = filesLoadedCount + 1;
+            
+        elseif (name ~= '.') and (name ~= '..') and paths.dirp(baseFolder .. name) and not (dirsToSkip[name]) then  -- if directory, recurse...
             if showLoading then
                 io.write(string.format('%s  == %s == \n', str_prefix, name))
             end
-            runAllScriptsInFolder(baseFolder .. name .. '/', level + 1)
+            runAllScriptsInFolder(baseFolder .. name .. '/', showLoading, level + 1)
         
             if showLoading then
                 io.write(string.format('%s  ======== \n', str_prefix))
@@ -34,7 +54,13 @@ runAllScriptsInFolder = function(baseFolder, level)
         
            
     end
+    
+    if level == 0 and not showLoading then
+        io.write(string.format(' done (loaded %d scripts)\n', filesLoadedCount))
+    end
+
 end
 
 
-runAllScriptsInFolder(myscripts_dir, 0)
+--print(myscripts_dir)
+runAllScriptsInFolder(myscripts_dir, showLoading, 0)

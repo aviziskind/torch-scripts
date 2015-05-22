@@ -115,7 +115,8 @@ end
 
 
 torch.tensorsEqual = function(x,y)
-    
+    X = x;
+    Y = y;
     local x_size = x:size()
     local y_size = y:size()
     if (#x_size ~= #y_size) then
@@ -129,6 +130,9 @@ torch.tensorsEqual = function(x,y)
         end
     end
 
+    if torch.numel(x) == 0 and torch.numel(y) == 0 then
+        return true
+    end
     
     if type(x[1]) == 'number' then  -- base case - tensors are just column vectors
         
