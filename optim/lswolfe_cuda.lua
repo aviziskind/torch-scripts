@@ -1,5 +1,4 @@
 require 'optim'
-
 ----------------------------------------------------------------------
 -- A Line Search satisfying the Wolfe conditions
 --
