@@ -1,3 +1,5 @@
+require 'nn'
+
 if not nn.SpatialL1Pooling then
     local SpatialL1Pooling, parent = torch.class('nn.SpatialL1Pooling', 'nn.Sequential')
 

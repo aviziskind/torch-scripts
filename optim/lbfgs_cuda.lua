@@ -1,3 +1,4 @@
+require 'optim'
 ----------------------------------------------------------------------
 -- An implementation of L-BFGS, heavily inspired by minFunc (Mark Schmidt)
 --
