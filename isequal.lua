@@ -87,10 +87,10 @@ isequal = function(x,y, maxNCompare_tbl)
         if fieldsThatYdoesntHave or fieldsThatXdoesntHave then
             reason = '';
             if fieldsThatXdoesntHave then
-                reason = reason .. string.format('x doesnt have these fields: %s; ', toList(fieldsThatXdoesntHave, nil, ', '))
+                reason = reason .. string.format('x doesnt have these fields: %s; ', toList(fieldsThatXdoesntHave, ', '))
             end
             if fieldsThatYdoesntHave then
-                reason = reason .. string.format('y doesnt have these fields: %s; ', toList(fieldsThatYdoesntHave, nil, ', '))
+                reason = reason .. string.format('y doesnt have these fields: %s; ', toList(fieldsThatYdoesntHave, ', '))
             end
             return false, reason
         end
