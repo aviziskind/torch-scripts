@@ -1,6 +1,11 @@
 local showLoading = false
 local nameOfThisFile = 'load_all_torch_scripts.lua'
-local myscripts_dir = '/f/scripts/torch/'
+local myscripts_dir = ''
+if paths.dirp('/home/avi') then
+    myscripts_dir = '/f/scripts/torch/'
+elseif paths.dirp('/home/ziskind') then
+    myscripts_dir = '/home/ziskind/f/scripts/torch/'
+end
 
 local dirsToSkip = {['.git'] = 1}
 local filesLoadedCount = 0;

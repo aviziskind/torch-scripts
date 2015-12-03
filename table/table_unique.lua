@@ -1,4 +1,4 @@
-tbl_unique = function(tbl)
+table.unique = function(tbl)
     
     if not type(tbl) == 'table' then
         error('This function is only for tables')
