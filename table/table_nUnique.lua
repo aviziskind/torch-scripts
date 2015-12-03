@@ -7,7 +7,7 @@ table.nUnique = function(x)
     for i = 1,#x do
         local found_i = false
         for j = i+1,#x do
-            if x[i] == x[j] then
+            if isequal(x[i], x[j]) then
                 found_i = true
                 break
             end
