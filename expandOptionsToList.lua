@@ -1,4 +1,3 @@
-
 expandOptionsToList = function(allOptions, loopKeysOrder)
     --print(allOptions)
     local baseTable = {}
@@ -7,6 +6,9 @@ expandOptionsToList = function(allOptions, loopKeysOrder)
     local loopValues = {}
     local nValuesEachLoopKey = {}
     local nTablesTotal = 1
+    local debug = false
+    
+    local loopFromFirstToLast = true
     
     -- find which variables are to be looped over, and gather in a separate table
     for key_full,val in pairs(allOptions) do
@@ -23,7 +25,9 @@ expandOptionsToList = function(allOptions, loopKeysOrder)
                 
                 error(string.format('Key %s has 0 array entries\n', key))
             end
-            
+            if debug then
+                print(string.format('key %s has %d entries', key, #val))
+            end
             
             table.insert(nValuesEachLoopKey, #val)
             nTablesTotal = nTablesTotal * (#val)
@@ -31,27 +35,46 @@ expandOptionsToList = function(allOptions, loopKeysOrder)
             baseTable[key_full] = val
         end        
     end
-    
+    if debug then
+        print('NTotal = ', nTablesTotal)
+    end
     
     if loopKeysOrder then
         if type(loopKeysOrder) == 'string' then
             loopKeysOrder = {loopKeysOrder}
         end
-        local idx_loopKeys_setOrder = {}
-        for i,key in ipairs(loopKeysOrder) do
-            local idx = table.find(loopKeys, key)
-            if not idx then   error(string.format('No such field %s in table', key))  end
-            idx_loopKeys_setOrder[i] = idx
+        if (#table.unique(loopKeysOrder) ~= #loopKeysOrder) then
+            error('Loop keys order table should have not have duplicate entries')
         end
-         
-         local loopKeys_other_idxs = table.setdiff(table.range(1, #loopKeys), idx_loopKeys_setOrder)         
+        
+        local putInFirst = true;
+        local idx_loopKeys_setOrder_first = {}
+        local idx_loopKeys_setOrder_last  = {}
+        for i,key in ipairs(loopKeysOrder) do
+            if key == '' then
+                putInFirst = false;
+            else
+                local idx = table.find(loopKeys, key)
+                if not idx then   error(string.format('No such field %s in table', key))  end
+                if putInFirst then
+                    table.insert(idx_loopKeys_setOrder_first, idx)
+                else
+                    table.insert(idx_loopKeys_setOrder_last, idx)
+                end
+            end            
+        end
+        
+                  
+        local loopKeys_other_idxs = table.setdiff(table.range(1, #loopKeys), 
+                        table.merge( idx_loopKeys_setOrder_first, idx_loopKeys_setOrder_last) )
          --print('other=', loopKeys_other_idxs)
-         local idx_new_order = table.merge(idx_loopKeys_setOrder, loopKeys_other_idxs)
+         local idx_new_order = table.merge(idx_loopKeys_setOrder_first, loopKeys_other_idxs, idx_loopKeys_setOrder_last)
                  
          loopKeys_full = table.subsref(loopKeys_full, idx_new_order)
          loopKeys = table.subsref(loopKeys, idx_new_order)
          nValuesEachLoopKey = table.subsref(nValuesEachLoopKey, idx_new_order)
         
+         
             --print(loopKeys)
             --return;
     end
@@ -62,6 +85,17 @@ expandOptionsToList = function(allOptions, loopKeysOrder)
     for i = 1, nLoopFields do
         loopIndices[i] = 1
     end
+    local fieldIdxStart, fieldInc, fieldIdxStop
+    if loopFromFirstToLast then
+        fieldIdxStart = 1
+        fieldInc = 1
+        fieldIdxStop = nLoopFields+1
+    else
+        fieldIdxStart = nLoopFields
+        fieldInc = -1
+        fieldIdxStop = 0
+    end
+    
     
     -- loop over all the loop-variables, assign to table.
 
@@ -83,11 +117,10 @@ expandOptionsToList = function(allOptions, loopKeysOrder)
             local vals_field_i = table.copy( allOptions[loopKeys_full[i]] )
             
             if not string.find(loopKeys[i], '_and_') then
-            
                 tbl_i[loopKeys[i]] = vals_field_i[loopIndices[i]]
             else
                 local sub_fields = {}
-                for sub_fld in string.gmatch(string.gsub(loopKeys[i], '_and_', ','), "%a+") do 
+                for sub_fld in string.gmatch(string.gsub(loopKeys[i], '_and_', ','), "[%a_]+") do 
                     table.insert(sub_fields, sub_fld)
                 end                
                 
@@ -97,14 +130,16 @@ expandOptionsToList = function(allOptions, loopKeysOrder)
             end
         end
         
-        local curFldIdx = 1
+       
+            
+        local curFldIdx = fieldIdxStart  -- loop from first to last
         
         loopIndices[curFldIdx] = loopIndices[curFldIdx] + 1
         while loopIndices[curFldIdx] > nValuesEachLoopKey[curFldIdx] do
             loopIndices[curFldIdx] = 1
-            curFldIdx = curFldIdx + 1
+            curFldIdx = curFldIdx + fieldInc  -- loop from first to last
             
-            if curFldIdx > nLoopFields then
+            if curFldIdx == fieldIdxStop then   -- loop from first to last
                 assert(j == nTablesTotal)
                 break;
             end

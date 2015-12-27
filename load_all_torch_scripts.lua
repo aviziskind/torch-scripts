@@ -32,11 +32,11 @@ runAllScriptsInFolder = function(baseFolder, showLoading, level)
     for _, name in pairs(allNames) do
             
         local str_prefix = string.rep('  ', level)
-        
+                
         local idx_ext = string.find(name, '[.]lua$')  -- put [] around . so that looks for actual ".", not any letter.  $ = end of string
         
         if (idx_ext ~= nil) and not (name == nameOfThisFile) then  -- if is a .lua script, load it
-            --print(script_name)
+            --print(name)
             if showLoading then
                 io.write(string.format('%s%s \n', str_prefix, name))
             end

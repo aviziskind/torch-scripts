@@ -27,10 +27,16 @@ end
 
 toc = function(tStart)
     --time_elapsed_t = __default_timer:time()
+    if tStart and type(tStart) ~= 'number' then
+        error('Input must be a number or nil')
+    end
+    
     if not tStart then
         tStart = __tic_toc_startTime__
     end
+    
     local timeElapsed_sec = sys.clock() - tStart
     
     return timeElapsed_sec
+    
 end
