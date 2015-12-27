@@ -7,7 +7,7 @@ setID = function()
     local pid_use
     local remote_id = os.getenv('remote_id')
     local bash_pid = os.getenv('bashpid')
-    if host == 'XPS' and THREAD_ID then
+    if host == 'cortex' and THREAD_ID then
         pid_use = THREAD_ID
     elseif preferRemoteID and remote_id then
         pid_use = remote_id

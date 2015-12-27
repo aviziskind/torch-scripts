@@ -1,11 +1,16 @@
 sec2hms = function(time_sec)
     require 'math'
+    local timing_type, time_min, time_hrs, time_days, time_years
+    local onedec, twodec, sgn, sign_str, str
+    
+    
     timing_type = 'seconds';
     if time_sec >= 0 then
         sgn = 1
     else
         sgn = -1;
     end
+    
     
     time_sec = (time_sec)*sgn;
     if time_sec >= 60 then
@@ -14,7 +19,7 @@ sec2hms = function(time_sec)
         timing_type = 'minutes';
         if time_min >= 60  then
             time_hrs = math.floor(time_min/60); -- convert to hours
-            time_min = math.mod(time_min, 60);
+            time_min = math.mod( time_min, 60 );
             timing_type = 'hours';
             if time_hrs >= 24  then
                 time_days = math.floor(time_hrs/24);

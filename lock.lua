@@ -2,7 +2,7 @@
 lock = {}
 lock.dir = paths.home .. '/Code/~locks/torch/' 
 if not paths.dirp(lock.dir) then
-    createFolder(lock.dir)
+    paths.createFolder(lock.dir)
 end
 
 debug_locks = false

@@ -38,4 +38,5 @@ toc = function(tStart)
     local timeElapsed_sec = sys.clock() - tStart
     
     return timeElapsed_sec
+    
 end

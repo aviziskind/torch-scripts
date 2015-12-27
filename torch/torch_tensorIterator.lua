@@ -43,7 +43,7 @@ end
 
 
 -- example function that iterates (and prints all values in) a tensor
-iterateOverTensor = function(X)
+torch.iterateOverTensor = function(X)
     for i,v in torch.tensorIterator(X) do 
         printf('%d : %.1f\n', i,v)
     end    

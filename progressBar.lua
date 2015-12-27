@@ -47,7 +47,7 @@ progressBar.init = function(stepsToDoDetails, nTotalBars, displayStyle_flag, aut
     -- (2) Determine where to start & where to end:
     
     pb.nStepsDoneAtStart = 0
-    
+    pb.timeTaken_sec = 0
     if type(stepsToDoDetails) == 'number' then
         pb.nStepsTotal = stepsToDoDetails
     elseif (#stepsToDoDetails) == 1 then

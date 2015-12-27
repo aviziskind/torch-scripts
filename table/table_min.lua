@@ -1,14 +1,13 @@
 table.min = function(tbl)
-    local minVal
+    local minVal, indMin
     for i,v in ipairs(tbl) do
-        if type(v) == 'number' then
-            if not minVal then
-                minVal = v
-            else
-                minVal = math.min(minVal, v)
-            end
+        if type(v) == 'number' and (not minVal or v < minVal) then
+            minVal = v
+            indMin = i
         end
     end
-    return minVal
+    return minVal, indMin
     
 end
+
+
