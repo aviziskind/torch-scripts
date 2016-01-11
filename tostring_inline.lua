@@ -1,4 +1,4 @@
-function tostring_inline(x)
+function tostring_inline(x, fmt)
     
     local typeX = type(x)
     local torchTypeX = torch.typename(x)
@@ -14,11 +14,11 @@ function tostring_inline(x)
         
         if isArray then 
             for i,v in ipairs(x) do    
-                s = s .. tostring_inline(v) .. ', '
+                s = s .. tostring_inline(v, fmt) .. ', '
             end
         else
             for k,v in pairs(x) do    
-                s = s .. k .. '=' .. tostring_inline(v) .. ', '
+                s = s .. k .. '=' .. tostring_inline(v, fmt) .. ', '
             end
         end
         s = string.sub(s, 1, #s-2) .. '}'
@@ -29,7 +29,11 @@ function tostring_inline(x)
         return '"' .. x .. '"'
         
     elseif typeX == 'number' or typeX == 'boolean' then
-        return tostring(x)
+        if fmt then
+            return string.format(fmt, x)
+        else
+            return tostring(x)
+        end
         
     elseif torchTypeX then
     
@@ -44,7 +48,27 @@ function tostring_inline(x)
             return s
         elseif string.find(typeX, 'Tensor') then
         
-        
+            local nDims = x:nDimension()
+            local s = '['
+            
+            if nDims == 1 then
+                for i = 1,x:numel() do    
+                    s = s .. tostring_inline(x[i], fmt) .. ', '
+                end               
+            elseif nDims == 2 then
+                for i = 1,x:size(1) do    
+                    s = s .. '[' 
+                    for j = 1,x:size(2) do
+                        s = s .. tostring_inline(x[i][j], fmt) .. ', '
+                    end
+                    s = string.sub(s, 1, #s-2) .. '], '
+                end               
+            
+            end
+                        
+            s = string.sub(s, 1, #s-2) .. ']'
+            return s
+
         end
         
     

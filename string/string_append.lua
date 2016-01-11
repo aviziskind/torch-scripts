@@ -1,7 +1,5 @@
 function string.append(curStr, newStr, sep)
-    if not sep then
-        sep = '; ';
-    end
+    sep = sep or '_' 
     
     if curStr == '' then
         return newStr
