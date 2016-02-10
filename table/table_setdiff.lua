@@ -1,4 +1,4 @@
-table.setdiff = function(tbl1, tbl2)
+table.setdiff = function(tbl1, tbl2, returnNilIfEmpty)
     
     local tbl3 = {}
     for i,v1 in ipairs(tbl1) do
@@ -14,7 +14,7 @@ table.setdiff = function(tbl1, tbl2)
         end
     end    
 
-    if #tbl3 == 0 then
+    if #tbl3 == 0 and returnNilIfEmpty then
         tbl3 = nil
     end
 

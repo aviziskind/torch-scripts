@@ -85,8 +85,8 @@ isequal_upTo = function(x,y, maxNCompare_tbl)
         local x_fields = table.keys(x)
         local y_fields = table.keys(y)
         
-        local fieldsThatYdoesntHave = table.setdiff(x_fields,y_fields)
-        local fieldsThatXdoesntHave = table.setdiff(y_fields,x_fields)
+        local fieldsThatYdoesntHave = table.setdiff(x_fields,y_fields, true) -- true: return nil if empty
+        local fieldsThatXdoesntHave = table.setdiff(y_fields,x_fields, true) -- true: return nil if empty
         
         if fieldsThatYdoesntHave or fieldsThatXdoesntHave then
             reason = '';
