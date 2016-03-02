@@ -186,16 +186,28 @@ end
     
 
 
-progressBar.done = function()
+progressBar.done = function(removeFlag)
     local pb = progressBar
-    if not pb.showTimeRemaining then
-        pb.timeTaken_sec = pb.timer:time().real
-        local completedStr = ' Completed in: ' .. sec2hms(pb.timeTaken_sec)  
-        io.write(completedStr)
+    
+    if removeFlag then
+        backspace(pb.laststr)
+        backspace(pb.nBarsDisplayed + 1)
+    else
+        if pb.showTimeRemaining then
+            backspace(pb.laststr)
+            blnk = string.rep(' ', pb.laststr:len())
+            io.write(blnk) 
+            backspace(blnk)
+
+            pb.timeTaken_sec = pb.timer:time().real
+            local completedStr = '| Completed in: ' .. sec2hms(pb.timeTaken_sec)  
+            io.write(completedStr)
+        end
+            
+        io.write('\n')
     end
-        
-    io.write('\n')
-    if progressBar.allowBreakWithFile then
+    
+    if pb.allowBreakWithFile then
         if paths.filep(stop_file) then            
             os.rename(stop_file, stopping_file)            
             error('Stop.')
@@ -218,6 +230,23 @@ progressBar.test = function()
         sys.sleep(0.01)
     end
     progressBar.done();
+    
+    --[[
+    io.write('Testing removal of progressBar after completion...\n')
+    
+    for i = 1,10 do
+        
+        io.write('[testing]')
+        progressBar.init(ntrials, 10)
+        for i = startAt, ntrials do
+            progressBar.step()
+            sys.sleep(0.01)
+        end
+        progressBar.done(1);
+
+    end
+--]]
+    
 
 --[[
     for _,ntrials in pairs({20, 40, 60}) do
