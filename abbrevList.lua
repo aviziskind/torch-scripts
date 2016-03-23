@@ -23,6 +23,9 @@ abbrevList = function(X, sep, maxRunBeforeAbbrev)
     
     sep  = sep or '_'
     maxRunBeforeAbbrev = maxRunBeforeAbbrev or 2
+    if maxRunBeforeAbbrev < 0 then
+        maxRunBeforeAbbrev = 1e10
+    end
     
     local abbrevSepValues = {[1] = 't', [0.5] = 'h', [0.25] = 'q', [5] = 'f', [10] = 'd'}
 
@@ -40,7 +43,7 @@ abbrevList = function(X, sep, maxRunBeforeAbbrev)
         local L = #X;
         --maxN = math.min(maxN or #X, #X)
         
-        local X_str = table.apply(X, tostring)
+        local X_str = table.apply(tostring, X)
         local curIdx = 1
         str = X_str[1]
         while curIdx < L do  -- maxN

@@ -135,7 +135,7 @@ lock.createLock = function(lock_name)
     local lock_file_name_withID = lock.getLockFileName(lock_name, true) -- this time, add ThreadID 
     f = assert( io.open(lock.dir .. lock_file_name_withID, 'w') )
     f:close()
-    io.write(string.format(' [Locked : %s]\n', lock_file_name_withID));
+    cprintf.red(' [Locked : %s]\n', lock_file_name_withID)
     
     --lock_file_name_withID = lock_file_name_withID
     
@@ -177,19 +177,19 @@ lock.createLock = function(lock_name)
         
         elseif nLocksWithSameBase > 1 or (lockFileNameExample ~= lock_file_name_withID)  then
         -- (3c) if other processes have tried to place a lock, check whose threadId is higher (if current process has a higher threadId, return true; otherwise, delete lock and return false)
-            print(string.format('Simultaneous locks! %d other session(s) tried to place this lock...', nLocksWithSameBase-1))
+            cprintf.Red('Simultaneous locks! %d other session(s) tried to place this lock...', nLocksWithSameBase-1)
             local allLocksWithThisName2 = lock.getAllLocks(lock_name)
             for _,lock_i in pairs(allLocksWithThisName2) do
                 
                 local base_i, id_i = lock.getLockName(lock_i)
                 assert(base_i == lock_file_name)
                 if (id_i > ID) then -- another process has beaten us.
-                    print(string.format('Thread %s has priority over us (%s). Conceding lock ... ', tostring(id_i), tostring(ID)) )
+                    cprintf.Red('Thread %s has priority over us (%s). Conceding lock ... ', tostring(id_i), tostring(ID)) 
 
                     lock.removeLock(lock_name)
                     return false, id_i
                 elseif (id_i < ID) then -- we take priority
-                    print(string.format('We (thread %s) take priority over thread %s. Waiting for thread %s to concede ...', tostring(ID), tostring(id_i), tostring(id_i) ))
+                    cprintf.Red('We (thread %s) take priority over thread %s. Waiting for thread %s to concede ...', tostring(ID), tostring(id_i), tostring(id_i) )
                     sys.sleep(secondsToWaitAfterCreatingLock) 
                 end
             end        
@@ -201,7 +201,7 @@ lock.createLock = function(lock_name)
     
     
     if (nLocksWithSameBase== 0) then
-        print('Could not place a lock for some reason ..? Abandonding lock...')
+        cprintf.Yellow('Could not place a lock for some reason ..? Abandonding lock...')
             -- (3b) wait a few more seconds for the file to register, perhaps?
         return false
     end    
@@ -212,7 +212,7 @@ lock.createLock = function(lock_name)
         local _, otherLockName = lock.nLocksWithThisName(lock_name)
         _, otherLockID = lock.getLockName(otherLockName)
         
-        print(string.format('Other thread(s) [ID = %s] did not concede. Abandonding lock...', otherLockID))
+        cprintf.Red('Other thread(s) [ID = %s] did not concede. Abandonding lock...', otherLockID)
         return false
     end
     
@@ -276,7 +276,7 @@ lock.removeLock = function(lock_name)
     --print('removing: ', lock_name, lock_file_name_withID)
     
     os.execute('rm "' .. lock.dir .. lock_file_name_withID .. '"')    
-    io.write(string.format(' [Unlocked : %s]\n', lock_file_name_withID))
+    cprintf.red(' [Unlocked : %s]\n', lock_file_name_withID)
     
 end
 
@@ -368,11 +368,15 @@ lock.removeMyLocks = function()
     end
     
     local ls_output = sys.ls(lock.dir .. '*.lock' .. thread_id_str)
-    print('removing these locks : ', ls_output)
-     
-    if not string.find(ls_output, 'No such file or directory') then    
+    local someLocksFound = not string.find(ls_output, 'No such file or directory') 
+    
+    if someLocksFound then
+        print('removing these locks : ', ls_output)
         os.execute('rm ' .. lock.dir .. '*.lock' .. thread_id_str)    
+    else
+        print('No locks from this process are present.');
     end
+     
  
 end
 
@@ -380,9 +384,14 @@ end
 
 lock.removeAllLocks = function()
     local ls_output = sys.ls(lock.dir .. '*.lock*')
+    local someLocksFound = not string.find(ls_output, 'No such file or directory') 
+
      
-    if not string.find(ls_output, 'No such file or directory') then    
+    if not someLocksFound then    
         os.execute('rm ' .. lock.dir .. '*.lock*')    
+        print('Removed all locks from all processes.');
+    else
+        print('No locks are present.');
     end
  
 end
