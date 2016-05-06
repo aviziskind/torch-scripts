@@ -44,6 +44,8 @@ function optim.sgd_auto(opfunc, x, config, state)
     -- (1) evaluate f(x) and df/dx
     local fx,dfdx = opfunc(x)
 
+    Dfdx_init = dfdx:clone()
+    State = state
     -- (2) weight decay
     if wd ~= 0 then
         dfdx:add(wd, x)
@@ -292,15 +294,18 @@ function optim.sgd_auto(opfunc, x, config, state)
             state.deltaParameters = torch.Tensor():typeAs(x):resizeAs(dfdx)
         end
         state.deltaParameters:copy(lrs):cmul(dfdx)
+        IsLRS = true
         x:add(-clr, state.deltaParameters)
 
     else
+        IsLRS = false
         x:add(-clr, dfdx)
     end
 
     -- (6) update evaluation counter
     state.evalCounter = state.evalCounter + 1
-
+    Fx = fx
+    
     -- return x*, f(x) before optimization
     return x,{fx}
 end
