@@ -1,11 +1,11 @@
 require 'nn'
 
-nn.criterion_batchForward = function(criterion, outputMatrix_train, target_train)
-    local N = outputMatrix_train:size(1)
-    local loss = 0
+nn.criterion_batchForward = function(criterion, outputs, targets)
+    local N = outputs:size(1)
+    local loss_eachOutput = torch.Tensor(N)
     for i = 1,N do
-        loss = loss + criterion:forward(outputMatrix_train[i], target_train[i])
+        loss_eachOutput[i] = criterion:forward(outputs[i], targets[i])
     end
-    loss = loss / N
-    return loss
+    local loss = loss_eachOutput:mean()
+    return loss, loss_eachOutput
 end

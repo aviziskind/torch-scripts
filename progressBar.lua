@@ -216,6 +216,13 @@ progressBar.done = function(removeFlag)
     
 end
 
+progressBar.printf = function(...)
+    local pb = progressBar
+    printf(...)
+
+    pb.laststr = ''
+
+end
 
 progressBar.test = function()
 
