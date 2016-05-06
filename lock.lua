@@ -119,7 +119,7 @@ lock.createLock = function(lock_name)
             --print('now is ', id_i)
             --print(string.format('Our ID = %s. Current ID = %s, equal = %s', id_i, ID, tostring(id_i==ID)))
             if (lockFileName_i == lock_file_name) and (id_i == ID) then -- we locked this before, and can now resume
-                print(string.format('Reclaiming lock : %s', lockFileName_i_withID))
+                cprintf.red(' [Reclaiming lock : %s]', lockFileName_i_withID)
                 return true
             end
         end
@@ -177,19 +177,19 @@ lock.createLock = function(lock_name)
         
         elseif nLocksWithSameBase > 1 or (lockFileNameExample ~= lock_file_name_withID)  then
         -- (3c) if other processes have tried to place a lock, check whose threadId is higher (if current process has a higher threadId, return true; otherwise, delete lock and return false)
-            cprintf.Red('Simultaneous locks! %d other session(s) tried to place this lock...', nLocksWithSameBase-1)
+            cprintf.Red('Simultaneous locks! %d other session(s) tried to place this lock...\n', nLocksWithSameBase-1)
             local allLocksWithThisName2 = lock.getAllLocks(lock_name)
             for _,lock_i in pairs(allLocksWithThisName2) do
                 
                 local base_i, id_i = lock.getLockName(lock_i)
                 assert(base_i == lock_file_name)
                 if (id_i > ID) then -- another process has beaten us.
-                    cprintf.Red('Thread %s has priority over us (%s). Conceding lock ... ', tostring(id_i), tostring(ID)) 
+                    cprintf.Red('Thread %s has priority over us (%s). Conceding lock ... \n', tostring(id_i), tostring(ID)) 
 
                     lock.removeLock(lock_name)
                     return false, id_i
                 elseif (id_i < ID) then -- we take priority
-                    cprintf.Red('We (thread %s) take priority over thread %s. Waiting for thread %s to concede ...', tostring(ID), tostring(id_i), tostring(id_i) )
+                    cprintf.Red('We (thread %s) take priority over thread %s. Waiting for thread %s to concede ...\n', tostring(ID), tostring(id_i), tostring(id_i) )
                     sys.sleep(secondsToWaitAfterCreatingLock) 
                 end
             end        
@@ -383,15 +383,18 @@ end
 
 
 lock.removeAllLocks = function()
-    local ls_output = sys.ls(lock.dir .. '*.lock*')
-    local someLocksFound = not string.find(ls_output, 'No such file or directory') 
+    local allLocks = lock.getAllLocks()
+    --local ls_output = sys.ls(lock.dir .. '*.lock*')
+    --local someLocksFound = not string.find(ls_output, 'No such file or directory') 
 
      
-    if not someLocksFound then    
-        os.execute('rm ' .. lock.dir .. '*.lock*')    
-        print('Removed all locks from all processes.');
-    else
+    if #allLocks == 0  then    
         print('No locks are present.');
+    else
+        print('Removing these locks:');
+        print(allLocks)
+        os.execute('rm ' .. lock.dir .. '*.lock*')    
+        
     end
  
 end
@@ -503,7 +506,7 @@ lock.testLock = function()
         local sync_time = 10
         local last_t = 0
         while not sync do
-            t = math.mod( math.floor(sys.clock()), sync_time)
+            t = math.modf( math.floor(sys.clock()), sync_time)
             if (t == 0) then
                 sync = true
             else

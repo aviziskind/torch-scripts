@@ -1,7 +1,7 @@
 local showLoading = false
 local nameOfThisFile = 'load_all_torch_scripts.lua'
 local myscripts_dir = ''
-if paths.dirp('/home/avi') then
+if paths.dirp('/home/avi') or paths.dirp('/home/fhwa/') then
     myscripts_dir = '/f/scripts/torch/'
 elseif paths.dirp('/home/ziskind') then
     myscripts_dir = '/home/ziskind/f/scripts/torch/'

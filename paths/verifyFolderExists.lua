@@ -1,4 +1,4 @@
-paths.verifyFolderExists = function(dirname)
+paths.verifyFolderExists = function(dirname, createIfDoesntExist)
     
     -- if provided with the name of a file, redirect to its parent folder
     if paths.removeFileExtension(dirname) ~= dirname then   --is the name of a file
@@ -7,6 +7,11 @@ paths.verifyFolderExists = function(dirname)
     end
     
     if not paths.dirp(dirname) then
-        error(string.format('Error: Path does not exist: %s', dirname))
+        if createIfDoesntExist then
+            io.write(string.format('Path does not exist: %s. Creating now :\n', dirname))
+            paths.createFolder(dirname)
+        else
+            error(string.format('Error: Path does not exist: %s', dirname))
+        end
     end        
 end

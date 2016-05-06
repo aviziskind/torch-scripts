@@ -34,6 +34,8 @@ function tostring_inline(x, fmt)
         else
             return tostring(x)
         end
+    elseif typeX == 'nil' then
+        return tostring(x)
         
     elseif torchTypeX then
     

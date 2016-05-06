@@ -13,6 +13,7 @@ table.toTensor = function(tbltbl, blankVal)
         maxSize = math.max(maxSize, curSize)
     end
     
+    local X
     if blankVal == 0 then
         X = torch.zeros(nSubTables, maxSize)
     else
