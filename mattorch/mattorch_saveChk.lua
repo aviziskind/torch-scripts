@@ -23,7 +23,7 @@ mattorch.saveChk = function(matFile, S)
         error(string.format('Cannot save mat files with variables more than 2GB in size (have one that is %.2f GB)', nBytesMax/(1024^3)))
     end
     
-    verifyFolderExists(matFile)
+    paths.sverifyFolderExists(matFile)
     
     mattorch.save(matFile, S)
     
