@@ -139,7 +139,9 @@ lock.createLock = function(lock_name)
     
     --lock_file_name_withID = lock_file_name_withID
     
-    sys.sleep(secondsToWaitAfterCreatingLock)
+    if not onLaptop then
+        sys.sleep(secondsToWaitAfterCreatingLock)
+    end
     
   --  local allLocks2 = lock.getAllLocks()
   --  local nLocksWithSameBase_AfterLocked = nInTableThatSatisfy(allLocks2, lock.getLockName, lock_file_name)

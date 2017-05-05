@@ -8,6 +8,7 @@ expandOptionsToList = function(allOptions, loopKeysOrder)
     local nTablesTotal = 1
     local debug = false
     
+    
     local loopFromFirstToLast = true
     
     -- find which variables are to be looped over, and gather in a separate table
