@@ -1,6 +1,5 @@
 require 'lfs'
 paths.filedate = function(filename)
-    FN = filename
     if not paths.filep(filename) then
         return nil
     end

@@ -1,4 +1,5 @@
 expandOptionsToList = function(allOptions, loopKeysOrder)
+    
     --print(allOptions)
     local baseTable = {}
     local loopKeys = {}
@@ -7,6 +8,10 @@ expandOptionsToList = function(allOptions, loopKeysOrder)
     local nValuesEachLoopKey = {}
     local nTablesTotal = 1
     local debug = false
+    
+    if not allOptions then
+        return nil
+    end
     
     
     local loopFromFirstToLast = true
@@ -56,11 +61,13 @@ expandOptionsToList = function(allOptions, loopKeysOrder)
                 putInFirst = false;
             else
                 local idx = table.find(loopKeys, key)
-                if not idx then   error(string.format('No such field %s in table', key))  end
-                if putInFirst then
-                    table.insert(idx_loopKeys_setOrder_first, idx)
-                else
-                    table.insert(idx_loopKeys_setOrder_last, idx)
+                --if not idx then   error(string.format('No such field %s in table', key))  end
+                if idx then
+                    if putInFirst then
+                        table.insert(idx_loopKeys_setOrder_first, idx)
+                    else
+                        table.insert(idx_loopKeys_setOrder_last, idx)
+                    end
                 end
             end            
         end
@@ -70,7 +77,7 @@ expandOptionsToList = function(allOptions, loopKeysOrder)
                         table.merge( idx_loopKeys_setOrder_first, idx_loopKeys_setOrder_last) )
          --print('other=', loopKeys_other_idxs)
          local idx_new_order = table.merge(idx_loopKeys_setOrder_first, loopKeys_other_idxs, idx_loopKeys_setOrder_last)
-                 
+                                  
          loopKeys_full = table.subsref(loopKeys_full, idx_new_order)
          loopKeys = table.subsref(loopKeys, idx_new_order)
          nValuesEachLoopKey = table.subsref(nValuesEachLoopKey, idx_new_order)
@@ -115,7 +122,8 @@ expandOptionsToList = function(allOptions, loopKeysOrder)
             if type(allOptions[loopKeys_full[i]]) ~= 'table' then
                 error(string.format('Field %s is not a table', loopKeys_full[i]))
             end
-            local vals_field_i = table.copy( allOptions[loopKeys_full[i]] )
+            --local vals_field_i = table.copy( allOptions[loopKeys_full[i]] )
+            local vals_field_i = allOptions[loopKeys_full[i]]
             
             if not string.find(loopKeys[i], '_and_') then
                 tbl_i[loopKeys[i]] = vals_field_i[loopIndices[i]]

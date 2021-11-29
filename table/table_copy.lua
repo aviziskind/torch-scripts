@@ -4,7 +4,7 @@ table.copy = function(tbl)
     
     local tbl_copy = {}
     for k,v in pairs(tbl) do
-                
+        VV = v
         local type_v = getType(v)
         local torch_type = torch.typename(v)
         --io.write(string.format('%s : %s\n', tostring(k), tostring(v) ))
@@ -22,24 +22,19 @@ table.copy = function(tbl)
                 
             if string.find(type_v, 'Tensor') then
                 
-                if (v:nElement() == 0) then --and (type_v == 'CudaTensor') then
-                    --io.write(string.format('%s : manual copy \n', type_v ))
-                    --sleep(2)
-                    
-                    tbl_copy[k] = torch.Tensor(0):typeAs(v)
-                else
-                    --io.write(string.format('%s : clone \n', type_v ))
-                    --sleep(2)
-                    
-                    tbl_copy[k] = v:clone()
-                end
+                tbl_copy[k] = v:clone()
+                --if (v:nElement() == 0) then --and (type_v == 'CudaTensor') then
+                --    tbl_copy[k] = torch.Tensor(0):typeAs(v)
+                --else
+                --    tbl_copy[k] = v:clone()
+                --end
                 
             elseif string.find(type_v, 'Storage') then
            
                 tbl_copy[k] = torch.StorageOfType(v:size(), torch.typename(v)):copy(v)
             else
-                
-                error(string.format('Unknown torch type : %s', type_v))
+                tbl_copy[k] = v:clone()
+                --error(string.format('Unhandled torch type : %s', torch_type))
             end
           
         

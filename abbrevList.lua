@@ -9,8 +9,9 @@ abbrevList = function(X, sep, maxRunBeforeAbbrev)
         1,3,5,7,9         --> 1t2t9   -- like MATLAB's  1:2:9
         1,1.5,2,2.5,3     --> 1h3     -- "h" = special separator for steps of 0.5  (*h*alf)
         1,1.25,1.5,1.75,2 --> 1q2     -- "q" = special separator for steps of 0.25 (*q*uarter) 
-        0,5,10,15,20      --> 0f20    -- "f" = special separator for steps of 5    (*f*ive)
-        0,10,20,30,40     --> 0d40    -- "d" = special separator for steps of 10   (*d*ecade)
+        0,0.1,0.2,0.3,0.4 --> 0d0.4   -- "d" = special separator for steps of 0.1   (*d*ecimal)
+        0,5,10,15,20      --> 0f20    -- "F" = special separator for steps of 5    (*F*ive)
+        0,10,20,30,40     --> 0d40    -- "D" = special separator for steps of 10   (*D*ecade)
             
     abbreviates repeated elements
         1,1,1,1  --> 1r4        -- like a special separator for steps of 0
@@ -27,9 +28,10 @@ abbrevList = function(X, sep, maxRunBeforeAbbrev)
         maxRunBeforeAbbrev = 1e10
     end
     
-    local abbrevSepValues = {[1] = 't', [0.5] = 'h', [0.25] = 'q', [5] = 'f', [10] = 'd'}
+    local abbrevSepValues = {[1] = 't', [0.5] = 'h', [0.25] = 'q', [0.1] = 'd', [5] = 'F', [10] = 'D'}
 
     local useHforHalfValues = true
+    local diff_th = 1e-10
     
     local typeX = getType(X)
     local str = ''
@@ -50,7 +52,7 @@ abbrevList = function(X, sep, maxRunBeforeAbbrev)
             local runLength = 0
             local initDiff = X[curIdx+1] - X[curIdx]
             local curDiff = initDiff
-            while (curIdx+runLength < L) and (curDiff == initDiff) do
+            while (curIdx+runLength < L) and (math.abs(curDiff - initDiff) < diff_th) do
                 runLength = runLength + 1
                 if curIdx+runLength < L then
                     curDiff = X[curIdx+runLength+1] - X[curIdx+runLength]
@@ -67,7 +69,7 @@ abbrevList = function(X, sep, maxRunBeforeAbbrev)
                     local abbrevSep
                     for diffVal,diffSymbol in pairs(abbrevSepValues) do
                         
-                        if initDiff == diffVal then
+                        if math.abs(initDiff - diffVal) < diff_th then
                             abbrevSep = diffSymbol
                         end
                     end
